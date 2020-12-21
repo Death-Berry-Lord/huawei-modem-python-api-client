@@ -4,7 +4,7 @@ import huaweisms.api.common
 XML_TEMPLATE = (
     '<?xml version="1.0" encoding="UTF-8"?>'
     '<request>'
-    '<dataswitch>{enable}</dataswitch>'
+    '<Action>{enable}</Action>'
     '</request>'
 )
 
@@ -21,24 +21,28 @@ def disconnect_mobile(ctx):
 
 def get_mobile_status(ctx):
     # type: (huaweisms.api.common.ApiCtx) -> ...
-    url = "{}/dialup/mobile-dataswitch".format(ctx.api_base_url)
+    url = "{}/monitoring/status".format(ctx.api_base_url) 
     result = huaweisms.api.common.get_from_url(url, ctx)
     if result and result.get('type') == 'response':
         response = result['response']
-        if response and response.get('dataswitch') == '1':
+        if response and response.get('ConnectionStatus') == '901':
             return 'CONNECTED'
-        if response and response.get('dataswitch') == '0':
+        if response and response.get('ConnectionStatus') == '902':
             return 'DISCONNECTED'
+        if response and response.get('ConnectionStatus') == '903':
+            return 'TURNING_OFF'
+        if response and response.get('ConnectionStatus') == '900':
+            return 'TURNING_ON'
     return 'UNKNOWN'
 
 
 def switch_mobile_off(ctx):
-    # type: (huaweisms.api.common.ApiCtx) -> ...
+   # type: (huaweisms.api.common.ApiCtx) -> ...
     data = XML_TEMPLATE.format(enable=0)
     headers = {
         '__RequestVerificationToken': ctx.token,
     }
-    url = "{}/dialup/mobile-dataswitch".format(ctx.api_base_url)
+    url = "{}/dialup/dial".format(ctx.api_base_url)
     return huaweisms.api.common.post_to_url(url, data, ctx, additional_headers=headers)
 
 
@@ -48,5 +52,5 @@ def switch_mobile_on(ctx):
     headers = {
         '__RequestVerificationToken': ctx.token,
     }
-    url = "{}/dialup/mobile-dataswitch".format(ctx.api_base_url)
+    url = "{}/dialup/dial".format(ctx.api_base_url)
     return huaweisms.api.common.post_to_url(url, data, ctx, additional_headers=headers)
