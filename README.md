@@ -4,6 +4,10 @@
 
 This is a python library to interact with a Huawei modem over HTTP API.
 
+* i have modifyed this to work with my personal E8372h-607 *  
+  Software version: 	21.316.01.01.723
+  Web UI version: 	17.100.15.01.723
+
 The library has been tested on these devices:
 * E5180
 * E8372
